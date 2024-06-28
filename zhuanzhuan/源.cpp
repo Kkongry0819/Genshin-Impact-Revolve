@@ -123,20 +123,26 @@ int readStoredValue() {
 	}
 	return value;
 }
-void thread1() {
-    while (true) {
-        if (GetKeyState(readStoredValue() == 0 ? VK_XBUTTON1 : readStoredValue()) < 0) {
-            stop = !stop;
-            Sleep(200);
-        }
-    }
-}
+//void thread1() {
+//    while (true) {
+//        if (GetKeyState(readStoredValue() == 0 ? VK_XBUTTON1 : readStoredValue()) < 0) {
+//            stop = !stop;
+//            Sleep(200);
+//        }
+//    }
+//}
 void thread2()
 {
     while (true) {
-        while (stop) {
-            mouse_event(MOUSEEVENTF_MOVE, 750, 0, 0, 0);
+        while (GetKeyState(readStoredValue() == 0 ? VK_XBUTTON1 : readStoredValue()) < 0) {
+            mouse_event(MOUSEEVENTF_MOVE, 800, 800, 0, 0);
             Sleep(1);
+            mouse_event(MOUSEEVENTF_MOVE, 800, -100, 0, 0);
+            stop = true;
+        }
+        if (stop) {
+            mouse_event(MOUSEEVENTF_MOVE, 0, -6000, 0, 0);
+            stop = false;
         }
     }
 }
@@ -144,9 +150,9 @@ int main() {
     cout << "按住" << ((readStoredValue() == 0) ? "鼠标侧键" : virtualKeyMap[readStoredValue()]) << ", 龙王开转咯！" << endl;
     mciSendString(L"open ./config/bgm.mp3 alias athley", NULL, 0, NULL);
     mciSendString(L"play athley ", NULL, 0, NULL);
-    thread t1(thread1); 
+    /*thread t1(thread1); */
     thread t2(thread2);
-    t1.join(); 
+    /*    t1.join();*/ 
     t2.join();
 	return 0;
 }
