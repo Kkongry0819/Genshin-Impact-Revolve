@@ -113,46 +113,41 @@ std::map<int, std::string> virtualKeyMap = {
     {0xA5, "右 ALT 键"},
 };
 const std::string CONFIG_FILE = "./config/config.cfg"; // 指定配置文件的路径或名称
+const std::string Velocity = "./config/velocity.cfg";
 atomic<bool> stop(false);
-int readStoredValue() {
+int readStoredValue(string FILE) {
 	int value = 0;
-	std::ifstream configFile(CONFIG_FILE);
+	std::ifstream configFile(FILE);
 	if (configFile.is_open()) {
 		configFile >> value;
 		configFile.close();
 	}
 	return value;
 }
-//void thread1() {
-//    while (true) {
-//        if (GetKeyState(readStoredValue() == 0 ? VK_XBUTTON1 : readStoredValue()) < 0) {
-//            stop = !stop;
-//            Sleep(200);
-//        }
-//    }
-//}
+void thread1() {
+    while (true) {
+        if (GetKeyState(readStoredValue(CONFIG_FILE) == 0 ? VK_XBUTTON1 : readStoredValue(CONFIG_FILE)) < 0) {
+            stop = !stop;
+            Sleep(200);
+        }
+    }
+}
 void thread2()
 {
     while (true) {
-        while (GetKeyState(readStoredValue() == 0 ? VK_XBUTTON1 : readStoredValue()) < 0) {
-            mouse_event(MOUSEEVENTF_MOVE, 800, 800, 0, 0);
+        while (stop) {
+            mouse_event(MOUSEEVENTF_MOVE, readStoredValue(Velocity) == 0 ? 800 : readStoredValue(Velocity), 0, 0, 0);
             Sleep(1);
-            mouse_event(MOUSEEVENTF_MOVE, 800, -100, 0, 0);
-            stop = true;
-        }
-        if (stop) {
-            mouse_event(MOUSEEVENTF_MOVE, 0, -6000, 0, 0);
-            stop = false;
         }
     }
 }
 int main() {
-    cout << "按住" << ((readStoredValue() == 0) ? "鼠标侧键" : virtualKeyMap[readStoredValue()]) << ", 龙王开转咯！" << endl;
+    cout << "按住" << ((readStoredValue(CONFIG_FILE) == 0) ? "鼠标侧键" : virtualKeyMap[readStoredValue(CONFIG_FILE)]) << ", 龙王开转咯！" << endl;
     mciSendString(L"open ./config/bgm.mp3 alias athley", NULL, 0, NULL);
     mciSendString(L"play athley ", NULL, 0, NULL);
-    /*thread t1(thread1); */
+    thread t1(thread1); 
     thread t2(thread2);
-    /*    t1.join();*/ 
+    t1.join(); 
     t2.join();
 	return 0;
 }
