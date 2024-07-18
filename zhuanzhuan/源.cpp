@@ -137,7 +137,7 @@ void thread2()
 	while (true)
 	{
 		while (GetKeyState(readStoredValue(CONFIG_FILE) == 0 ? VK_XBUTTON1 : readStoredValue(CONFIG_FILE)) < 0) {
-			mouse_event(MOUSEEVENTF_MOVE, readStoredValue(Velocity) == 0 ? VK_XBUTTON1 : readStoredValue(Velocity), 0, 0, 0);
+			mouse_event(MOUSEEVENTF_MOVE, readStoredValue(Velocity) == 0 ? 800 : readStoredValue(Velocity), 0, 0, 0);
 			Sleep(1);
 		}
 	}
