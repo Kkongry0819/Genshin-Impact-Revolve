@@ -124,15 +124,7 @@ int readStoredValue(string FILE) {
 	}
 	return value;
 }
-//void thread1() {
-//    while (true) {
-//        if (GetKeyState(readStoredValue() == 0 ? VK_XBUTTON1 : readStoredValue()) < 0) {
-//            stop = !stop;
-//            Sleep(200);
-//        }
-//    }
-//}
-void thread2()
+void entrance()
 {
 	while (true)
 	{
@@ -146,10 +138,7 @@ int main() {
 	cout << "按住" << ((readStoredValue(CONFIG_FILE) == 0) ? "鼠标侧键" : virtualKeyMap[readStoredValue(CONFIG_FILE)]) << ", 龙王开转咯！" << endl;
 	mciSendString(L"open ./config/bgm.mp3 alias athley", NULL, 0, NULL);
 	mciSendString(L"play athley ", NULL, 0, NULL);
-	/*thread t1(thread1); */
-	thread t2(thread2);
-	/*    t1.join();*/
-	t2.join();
+	entrance();
 	return 0;
 }
 
